@@ -185,7 +185,7 @@ class BaseAgent(ABC):
 
         print(f'Episode: {self.episodes:<4}  '
               f'episode steps: {episode_steps:<4}  '
-              f'return: {episode_return:<5.1f}')
+              f'return: {float(episode_return):<5.1f}')
 
     def train_step_interval(self):
         self.epsilon_train.step()

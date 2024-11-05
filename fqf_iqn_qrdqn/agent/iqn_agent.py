@@ -17,7 +17,7 @@ class IQNAgent(BaseAgent):
                  epsilon_decay_steps=250000, double_q_learning=False,
                  dueling_net=False, noisy_net=False, use_per=False,
                  log_interval=100, eval_interval=250000, num_eval_steps=125000,
-                 max_episode_steps=27000, grad_cliping=None, cuda=True,
+                 max_episode_steps=1000, grad_cliping=None, cuda=True,
                  seed=0):
         super(IQNAgent, self).__init__(
             env, test_env, log_dir, num_steps, batch_size, memory_size,
@@ -29,12 +29,12 @@ class IQNAgent(BaseAgent):
 
         # Online network.
         self.online_net = IQN(
-            num_channels=env.observation_space.shape[0],
+            state_dim=env.observation_space.shape[0] * env.observation_space.shape[1],
             num_actions=self.num_actions, K=K, num_cosines=num_cosines,
             dueling_net=dueling_net, noisy_net=noisy_net).to(self.device)
         # Target network.
         self.target_net = IQN(
-            num_channels=env.observation_space.shape[0],
+            state_dim=env.observation_space.shape[0] * env.observation_space.shape[1],
             num_actions=self.num_actions, K=K, num_cosines=num_cosines,
             dueling_net=dueling_net, noisy_net=noisy_net).to(self.device)
 
