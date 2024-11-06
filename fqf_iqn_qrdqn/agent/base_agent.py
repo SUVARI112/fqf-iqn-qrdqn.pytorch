@@ -240,8 +240,10 @@ class BaseAgent(ABC):
         self.writer.add_scalar(
             'return/test', mean_return, 4 * self.steps)
         print('-' * 60)
-        print(f'Num steps: {self.steps:<5}  '
-              f'return: {mean_return:<5.1f}')
+        print(f'Num steps: {float(self.steps):<5.1f}  '
+              f'return: {float(mean_return)/500:<5.1f}')
+        #print(f'Num steps: {self.steps:<5}  '
+         #     f'return: {mean_return:<5.1f}')
         print('-' * 60)
 
     def __del__(self):

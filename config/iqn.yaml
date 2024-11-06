@@ -20,7 +20,7 @@ dueling_net: False
 noisy_net: False
 use_per: False
 log_interval: 100
-eval_interval: 20000
+eval_interval: 5000
 num_eval_steps: 500  # It equals to 500k frames.
 max_episode_steps: 500
 grad_cliping:

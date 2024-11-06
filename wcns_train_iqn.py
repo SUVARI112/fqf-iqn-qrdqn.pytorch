@@ -4,7 +4,7 @@ import argparse
 from datetime import datetime
 
 import numpy as np
-from fqf_iqn_qrdqn.environment.environment import Environment
+from fqf_iqn_qrdqn.environment.environment import Environment, Environment_eval
 from fqf_iqn_qrdqn.environment.plant import Plant
 
 from fqf_iqn_qrdqn.env import make_pytorch_env
@@ -55,7 +55,7 @@ def run(args):
 
     # Create environments.
     env = Environment(plants, no_of_channels, uplink_coefficients, downlink_coefficients, controllability)
-    test_env = Environment(plants, no_of_channels, uplink_coefficients, downlink_coefficients, controllability)
+    test_env = Environment_eval(plants, no_of_channels, uplink_coefficients, downlink_coefficients, controllability)
 
     # Specify the directory to log.
     name = args.config.split('/')[-1].rstrip('.yaml')
