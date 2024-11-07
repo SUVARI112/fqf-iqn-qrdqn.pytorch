@@ -37,22 +37,9 @@ class Environment():
         # Define action space (discrete actions from 0 to 33 based on your TF implementation)
         self.action_space = spaces.Discrete(34)  # 0 to 33 inclusive
 
-    @staticmethod
-    def generate_combinations_and_permutations(M, N):
-        all_permutations = []
-
-        # Generating combinations from the set [1, 2, 3, ..., M]
-        for r in range(M + 1):
-            for combination in combinations(range(1, M + 1), r):
-                # Appending zeros to make it N elements long
-                combination_with_zeros = list(combination) + [0] * (N - r)
-
-                # Generating all permutations of this combination
-                for perm in set(permutations(combination_with_zeros)):
-                    all_permutations.append(list(perm))
-
-        return np.asarray(all_permutations)
-
+        # logging info
+        self.total_cost = 0
+        self.step_counter = 1
 
     def close(self):
         self.reset()
@@ -163,12 +150,21 @@ class Environment():
         else:
             cost = scaling_factor*np.log(empirical_cost)
 
+        self.step_counter += 1
+        self.total_cost += empirical_cost
+
         return self.state.copy(), -1*cost, False, {}
 
     def reset(self):
         self.state = np.ones((2 * self.N, self.controllability + 1), dtype=int)
         for plant in self.plants:
             plant.reset()
+        
+        # log the episode info
+        self.save_evaluation_data()
+        self.total_cost = 0
+        self.step_counter = 0
+
         return self.state
 
     def random_reset(self):
@@ -415,6 +411,37 @@ class Environment():
         total_sum = sum(combinations(M, m) * permutations(N, m) for m in range(M + 1))
 
         return total_sum
+    
+    def save_evaluation_data(self, file="log_evaluation_data.npy"):
+        
+        try:
+            # Laden vorhandener Daten, falls vorhanden
+            existing_data = np.load(file, allow_pickle=True).tolist()
+        except FileNotFoundError:
+            existing_data = []
+        
+        data = float(self.total_cost/self.step_counter)
+        print(f"Average Empirical Cost: {data}")
+        print(f"---------------------------------------------")
+        
+        existing_data.append(data)
+        np.save(file, np.array(existing_data))
+
+    @staticmethod
+    def generate_combinations_and_permutations(M, N):
+        all_permutations = []
+
+        # Generating combinations from the set [1, 2, 3, ..., M]
+        for r in range(M + 1):
+            for combination in combinations(range(1, M + 1), r):
+                # Appending zeros to make it N elements long
+                combination_with_zeros = list(combination) + [0] * (N - r)
+
+                # Generating all permutations of this combination
+                for perm in set(permutations(combination_with_zeros)):
+                    all_permutations.append(list(perm))
+
+        return np.asarray(all_permutations)
 
 
 

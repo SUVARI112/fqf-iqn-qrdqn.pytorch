@@ -5,7 +5,7 @@ N_dash: 64
 K: 32
 num_cosines: 64
 kappa: 1.0
-lr: 5.e-4
+lr: 4.e-4
 memory_size: 20000
 gamma: 0.95
 multi_step: 1
@@ -20,7 +20,7 @@ dueling_net: False
 noisy_net: False
 use_per: False
 log_interval: 100
-eval_interval: 5000
+eval_interval: 50000000000
 num_eval_steps: 500  # It equals to 500k frames.
 max_episode_steps: 500
 grad_cliping:
