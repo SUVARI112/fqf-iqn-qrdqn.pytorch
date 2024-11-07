@@ -10,12 +10,12 @@ memory_size: 20000
 gamma: 0.95
 multi_step: 1
 update_interval: 1
-target_update_interval: 100
+target_update_interval: 300
 start_steps: 2000
 epsilon_train: 0.01
 epsilon_eval: 0.001
 epsilon_decay_steps: 6000  # It equals to 1M frames.
-double_q_learning: True
+double_q_learning: False
 dueling_net: False
 noisy_net: False
 use_per: False
