@@ -460,7 +460,6 @@ class Environment():
 
 
 class Environment_eval():
-
     def __init__(self, plants, no_of_channels, uplink_coefficients, downlink_coefficients, controllability):
         self.plants = plants
         self.controllability = controllability
@@ -469,7 +468,8 @@ class Environment_eval():
         self.uplink_coefficients = uplink_coefficients
         self.downlink_coefficients = downlink_coefficients
         self.state = np.ones((2 * self.N, controllability + 1), dtype=int)
-        self.action_list = self.generate_combinations_and_permutations(self.M, self.N)
+        # self.action_list = self.generate_combinations_and_permutations(self.M, self.N)
+        self.action_list = self.generate_permutations_no_repetition(self.M, self.N)
         self.downlink_uplink_indicator = np.ones(self.N, dtype=int)
 
         self.S_x = np.identity(plants[0].dim)
@@ -489,24 +489,13 @@ class Environment_eval():
         )
         
         # Define action space (discrete actions from 0 to 33 based on your TF implementation)
-        self.action_space = spaces.Discrete(34)  # 0 to 33 inclusive
+        self.action_space = spaces.Discrete(len(self.action_list))  # 0 to 33 inclusive
+        print("Number of Actions: ", len(self.action_list))
+        print("Actions: ", self.action_list)
 
-    @staticmethod
-    def generate_combinations_and_permutations(M, N):
-        all_permutations = []
-
-        # Generating combinations from the set [1, 2, 3, ..., M]
-        for r in range(M + 1):
-            for combination in combinations(range(1, M + 1), r):
-                # Appending zeros to make it N elements long
-                combination_with_zeros = list(combination) + [0] * (N - r)
-
-                # Generating all permutations of this combination
-                for perm in set(permutations(combination_with_zeros)):
-                    all_permutations.append(list(perm))
-
-        return np.asarray(all_permutations)
-
+        # logging info
+        self.total_cost = 0
+        self.step_counter = 1
 
     def close(self):
         self.reset()
@@ -525,7 +514,7 @@ class Environment_eval():
 
         # choose links
         action = self.action_list[action]
-        links = action * self.downlink_uplink_indicator
+        links = action * self.downlink_uplink_indicator[action-1]
         # print(f"choosen Links: {links}")
         # uplink
         betas = np.zeros(self.N)
@@ -618,6 +607,11 @@ class Environment_eval():
         self.state = np.ones((2 * self.N, self.controllability + 1), dtype=int)
         for plant in self.plants:
             plant.reset()
+        
+        # log the episode info
+        self.total_cost = 0
+        self.step_counter = 0
+
         return self.state
 
     def random_reset(self):
@@ -864,3 +858,31 @@ class Environment_eval():
         total_sum = sum(combinations(M, m) * permutations(N, m) for m in range(M + 1))
 
         return total_sum
+
+    @staticmethod
+    def generate_combinations_and_permutations(M, N):
+        all_permutations = []
+
+        # Generating combinations from the set [1, 2, 3, ..., M]
+        for r in range(M + 1):
+            for combination in combinations(range(1, M + 1), r):
+                # Appending zeros to make it N elements long
+                combination_with_zeros = list(combination) + [0] * (N - r)
+
+                # Generating all permutations of this combination
+                for perm in set(permutations(combination_with_zeros)):
+                    all_permutations.append(list(perm))
+
+        return np.asarray(all_permutations)
+
+    @staticmethod
+    def generate_permutations_no_repetition(M, N):
+        all_permutations = []
+        
+        # Taking M numbers from range 1 to N
+        for combination in combinations(range(1, N + 1), M):
+            # Generate all permutations of each combination
+            for perm in permutations(combination):
+                all_permutations.append(list(perm))
+                
+        return np.asarray(all_permutations)
