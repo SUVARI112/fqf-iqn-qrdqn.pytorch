@@ -27,8 +27,15 @@ def run(args):
               np.identity(2),
               0.1 * np.identity(2),
               0.1 * np.identity(2),
-              np.array([[-2.900, 1.000]])
-              ),
+              np.array([[-2.900, 1.000]])),
+        Plant(2,
+              controllability,
+              np.array([[1.2, 0.2], [0.2, 0.9]]),
+              np.array([[1], [1]]),
+              np.identity(2),
+              0.1 * np.identity(2),
+              0.1 * np.identity(2),
+              np.array([[-3.533, 1.433]])),
         Plant(2,
               controllability,
               np.array([[1.2, 0.2], [0.2, 0.9]]),
@@ -44,7 +51,15 @@ def run(args):
               np.identity(2),
               0.1 * np.identity(2),
               0.1 * np.identity(2),
-              np.array([[-4.233, 1.933]]))
+              np.array([[-4.233, 1.933]])),
+        # Plant(2,
+        #       controllability,
+        #       np.array([[1.3, 0.2], [0.2, 1.0]]),
+        #       np.array([[1], [1]]),
+        #       np.identity(2),
+        #       0.1 * np.identity(2),
+        #       0.1 * np.identity(2),
+        #       np.array([[-4.233, 1.933]]))
     ]
 
     # Generate random success rates for uplink and downlink channels, fix the random seed to check the results later.

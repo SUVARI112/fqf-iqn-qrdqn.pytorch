@@ -15,7 +15,8 @@ class Environment():
         self.uplink_coefficients = uplink_coefficients
         self.downlink_coefficients = downlink_coefficients
         self.state = np.ones((2 * self.N, controllability + 1), dtype=int)
-        self.action_list = self.generate_combinations_and_permutations(self.M, self.N)
+        # self.action_list = self.generate_combinations_and_permutations(self.M, self.N)
+        self.action_list = self.generate_permutations_no_repetition(self.M, self.N)
         self.downlink_uplink_indicator = np.ones(self.N, dtype=int)
 
         self.S_x = np.identity(plants[0].dim)
@@ -35,7 +36,9 @@ class Environment():
         )
         
         # Define action space (discrete actions from 0 to 33 based on your TF implementation)
-        self.action_space = spaces.Discrete(34)  # 0 to 33 inclusive
+        self.action_space = spaces.Discrete(len(self.action_list))  # 0 to 33 inclusive
+        print("Number of Actions: ", len(self.action_list))
+        print("Actions: ", self.action_list)
 
         # logging info
         self.total_cost = 0
@@ -58,7 +61,7 @@ class Environment():
 
         # choose links
         action = self.action_list[action]
-        links = action * self.downlink_uplink_indicator
+        links = action * self.downlink_uplink_indicator[action-1]
         # print(f"choosen Links: {links}")
         # uplink
         betas = np.zeros(self.N)
@@ -161,7 +164,7 @@ class Environment():
             plant.reset()
         
         # log the episode info
-        self.save_evaluation_data()
+        self.save_evaluation_data(file=f"log_evaluation_data_{self.M}-{self.N}.npy")
         self.total_cost = 0
         self.step_counter = 0
 
@@ -443,7 +446,17 @@ class Environment():
 
         return np.asarray(all_permutations)
 
-
+    @staticmethod
+    def generate_permutations_no_repetition(M, N):
+        all_permutations = []
+        
+        # Taking M numbers from range 1 to N
+        for combination in combinations(range(1, N + 1), M):
+            # Generate all permutations of each combination
+            for perm in permutations(combination):
+                all_permutations.append(list(perm))
+                
+        return np.asarray(all_permutations)
 
 
 class Environment_eval():
