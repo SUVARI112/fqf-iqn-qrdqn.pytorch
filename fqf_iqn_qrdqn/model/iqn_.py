@@ -18,8 +18,8 @@ class IQN(BaseModel):
             noisy_net=noisy_net)
         # Quantile network.
         self.quantile_net = QuantileNetwork(
-            num_actions=num_actions, dueling_net=dueling_net,
-            noisy_net=noisy_net)
+            num_actions=num_actions, state_dim=state_dim, 
+            dueling_net=dueling_net, noisy_net=noisy_net)
 
         self.K = K
         self.state_dim = state_dim
