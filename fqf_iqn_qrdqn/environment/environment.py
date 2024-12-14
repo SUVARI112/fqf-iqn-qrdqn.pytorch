@@ -153,6 +153,7 @@ class Environment():
         else:
             cost = scaling_factor*np.log(empirical_cost)
 
+        cost = np.sum(np.pow(self.state.copy(), 2))
         self.step_counter += 1
         self.total_cost += empirical_cost
 
